@@ -1,0 +1,49 @@
+p#commune span {
+	font-size: small;
+	color: white;
+	text-decoration: none;
+	position: absolute;
+	top: 38px;
+}
+
+p#today {
+	font-size: x-small;
+	margin:0;
+	padding:5px 0
+}
+
+p#tel {
+	font-size: x-small;
+	margin:3px;
+	padding:0px 0px
+}
+
+p#copyright {
+	font-size: small;
+	margin:3px;
+	padding:0px 0px
+}
+
+p#copyright a {
+	text-decoration: none;
+}
+
+p#copyright span {
+	font-size: x-small;
+	margin:3px;
+	padding:0px 0px
+}
+
+a#totop {
+	position: fixed;
+	bottom: 35px;
+	display: none;"
+}
+
+#page-header {
+	min-height: 100px;
+}
+
+li#cont {
+	padding-left: 30px;
+}
