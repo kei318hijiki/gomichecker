@@ -1,132 +1,78 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
 
-<meta http-equiv="X-UA-Compatible" content="IE=10">
-
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-<link rel="stylesheet" href="css/gomi.css">
-<link rel="apple-touch-icon" href="image/gomi_icon.png"/>
-
-<!--　①自治体名称を変更　-->
+<!--■■■■■①【タイトル】次の「越前市」部分をあなたのまち（自治体）に直してください。■■■■■-->
 <title>別海町ゴミチェッカー</title>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=10">
 
-<!--□□□□□  javascript  □□□□□-->
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="https://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+<script type="text/javascript" src="js/jquery.gomi.js"></script>
+
+<link rel="apple-touch-icon" href="image/gomi_icon.png"/>
+
 <script type="text/javascript">
 
-// □□□□□　ウィンドウロード時の設定　□□□□□
 $(window).load(function(){
 	myparseXml()
 });
-
-
-// □□□□□　xmlデータ取得　□□□□□
+ 
 function myparseXml(xml){
 	$.mobile.defaultPageTransition = 'none';
 	scrollTo(0,0);
-	$.ajax({
-		url: "xml/gomi.xml",
-		type: "GET",
-		dataType: "xml",
-		error: function(){alert("動作検証中：\n動作確認済(推奨ブラウザ)：Safari,FireFox,IE11,Google Chrome");},
-		success: function(xml){parseXml(xml);}
-	});
+	$.getinfo({xml: "xml/gomi.xml", template: "text/gomichecker.txt"},
+		function (obj, map) {
+			$('#myList li').remove();
+			$('#myContents div').remove();
+			var mycategory = $('#mysel').val();
+			var myList = "", myContents = "";
+			var count = $.size("gomi");
+			for (var n = 0; n < count; n++) {
+				if(mycategory == "全て"){
+					myList += $.convert("myList", n);
+					myContents += $.convert("myContents", n);
+				}
+				else if($.convert("mySel", n).match(mycategory)){
+					myList += $.convert("myList", n);
+					myContents += $.convert("myContents", n);
+				}
+				else{
+				}
+			}
+			$("#myList").append(myList).listview("refresh");
+			$("#home").after(myContents).page();
+			$("input[data-type='search']").val("");
+		},
+		function (msg) { alert(msg); }
+	);
 }
-
-
-// □□□□□　xmlデータ取得時におけるリストとコンテンツの設定　□□□□□
-function parseXml(xml){
-	$('#myList li').remove();
-	$('#myContents div').remove();
-	var myList = "";
-	var myContents = "";
-	var mygomi = $("gomi", xml);
-	var i;
-	var mycategory = $('#mysel').val();
-	for (i = 0; i < mygomi.length; i++){
-		if(mycategory == "全て"){
-		myList += "<li data-filtertext=" + $(mygomi[i]).find("keyword").text() + "><a href='#no" + i + "'>" + $(mygomi[i]).find("name").text() + "</a></li>";
-		myContents += "<div data-role='page' id='no" + i + "' data-url='no" + i + "' data-add-back-btn='true'>" +
-					"<div data-role='header' align='center'>" +
-						"<image src='image/gomicheckerimage/4_1_gomichecker.png' width='200' alt='gomichecker'>" +
-					"</div>" +
-					"<div data-role='content'>" +
-						"<h3>" +$(mygomi[i]).find("name").text() + "</h3>" +
-						"<h3>分別：" +$(mygomi[i]).find("kubun").text()+ "</h3>" +
-						"<p>" + $(mygomi[i]).find("zyouken").text() + "</p>" +
-						"<h4>" + "<br>資源を次の世代に。。。" + "</h4>" +
-					"</div>" +
-				"</div>";
-		}
-		else if($(mygomi[i]).find("gyou").text().match(mycategory)){
-		myList += "<li data-filtertext=" + $(mygomi[i]).find("keyword").text() + "><a href='#no" + i + "'>" + $(mygomi[i]).find("name").text() + "</a></li>";
-		myContents += "<div data-role='page' id='no" + i + "' data-url='no" + i + "' data-add-back-btn='true'>" +
-					"<div data-role='header' align='center'>" +
-						"<image src='image/gomicheckerimage/4_1_gomichecker.png' width='200' alt='gomichecker'>" +
-					"</div>" +
-					"<div data-role='content'>" +
-						"<h3>" +$(mygomi[i]).find("name").text() + "</h3>" +
-						"<h3>分別：" +$(mygomi[i]).find("kubun").text()+ "</h3>" +
-						"<p>" + $(mygomi[i]).find("zyouken").text() + "</p>" +
-						"<h4>" + "<br>資源を次の世代に。。。" + "</h4>" +
-					"</div>" +
-				"</div>";
-		}
-		else{
-		}
-	}
-	$("#myList").append(myList).listview("refresh");
-	$("#home").after(myContents).page();
-	$("input[data-type='search']").val("");
-}
-
-
-// □□□□□　日付の設定　□□□□□
-var weeks = new Array('日','月','火','水','木','金','土');
-var now = new Date();
-var year = now.getYear();
-var month = now.getMonth() + 1;
-var day = now.getDate();
-var week = weeks[ now.getDay() ];
-if(year < 2000) { year += 1900; }
-if(month < 10) { month = "0" + month; }
-if(day < 10) { day = "0" + day; }
-
 
 </script>
-
-
-<!--□□□□□  CSS  □□□□□-->
+</script>
 <style type="text/css">
 
-/*　吹き出し中の自治体名称の位置（③と連動）　*/
-p#commune span {
-	/*　②以下を次の数値に変更する。自治体名称の文字数:2字＝113px, 3字＝105px, 4字＝99px, 5字＝91px, 6字＝85px, 7字＝77px　*/
-	left: 105px;
-}
-
 #myfix {
-	padding-top : 45px;
+    padding-top : 45px;
 }
 
 #myfix form {
-	position : fixed;
-	top      : 114px;
-	left     : 15px;
-	width    : 100%;
-	z-index  : 2;
+    position : fixed;
+    top      : 130px;
+    left     : 15px;
+    width    : 100%;
+    z-index  : 2;
 }
-
 
 </style>
 
 
-<!--□□□□□　●google analytics　□□□□□-->
+<!--■■■■■　google analytics　■■■■■-->
 
 
 </head>
@@ -135,18 +81,27 @@ p#commune span {
 <body>
 
 
-<!--□□□□□  ページ  □□□□□-->
 <div data-role="page" id="home">
 
-
-<!--□□□□□  ヘッダー  □□□□□-->
-	<div id="page-header" data-role="header" data-position="fixed" align="center" data-tap-toggle="false">
+<!--★★★★★★★★★★　ここからがヘッダー　★★★★★★★★★★-->
+	<div data-role="header" data-position="fixed" align="center" data-tap-toggle="false" style="min-height:115px;">
 		<div><image src="image/gomicheckerimage/1_1_blue.png" width="100%" height="22" alt=""></div>
 		<span style="position: absolute; top: 1px; left: 18px;"><font size="3">このゴミ、燃えるゴミだっけ？</font></span>
 		<image src="image/gomicheckerimage/1_2_gomichecker.png" width="200" alt="gomichecker" align="left">
 
-		<!--□□□□□  ③吹き出し中の自治体名称を設定（②と連動）  □□□□□-->
-		<p id="commune"><span>別海町</span></p>
+<!--■■■■■②【あなたのまち（自治体）をゴミチェッカーのロゴの部分の吹き出しに表示】 　　　　　■■■■■-->
+<!--■■■■■　・次の「越前市」の部分を直してください。 　　　　　　　　　　　　　　　　　　　　■■■■■-->
+<!--■■■■■　・自治体の文字数とleft:@@@px値の対応を見て書き換えてください。 　　　　　　　　　■■■■■-->
+<!--■■■■■　　　2文字＝113px,3文字＝105px,4文字＝99px,5文字＝91px,6文字＝85px,7文字＝77px　　■■■■■-->
+		<span style="position: absolute; top: 36px; left: 105px;"><font size="2">別海町</font></span>
+<!--■■■■■※ここまで■■■■■-->
+
+<!--■■■■■③【他言語版の「ゴミチェッカー」へのリンク】もし他の言語版が無い場合は、次の※ここまで※を消去してください。■■■■■-->
+		
+<!--■■■■■※ここまで■■■■■-->
+
+
+		<image src="image/gomicheckerimage/1_3_search.png" width="80" alt="50onsearch">
 
 		<select id="mysel" name="mysel" data-inline="true" onchange="myparseXml()">
 			<option value="全て">全て</option>
@@ -165,30 +120,40 @@ p#commune span {
 	</div>
 
 
-<!--□□□□□  コンテンツ  □□□□□-->
+
+<!--★★★★★★★★★★　ここからがリスト　★★★★★★★★★★-->
 	<div data-role="content" id="myListview">
 		<div id="myfix">
-			<ul data-role="listview" id="myList" data-filter="true" data-filter-placeholder="検索...（ひらがな対応）"></ul>
+			<ul data-role="listview" id="myList" data-filter="true" data-filter-placeholder="検索ワード...（ひらがな検索対応）"></ul>
 		</div>
 	</div>
 
+<!--★★★★★★★★★★　ここからがフッター　★★★★★★★★★★-->
+	<div data-role="footer" data-position="fixed" align="center" data-tap-toggle="false">
+<!--■■■■■④【「ゴミかれんだー」へのリンク】もし「ゴミかれんだー」を使用しない場合は、次の※ここまで※を消去してください。■■■■■-->
 
-<!--□□□□□  フッター  □□□□□-->
-	<div data-role="footer" data-position="fixed" data-tap-toggle="false" align="center">
-		<!--□□□□□　④「ゴミかれんだー」を使用しない場合は、次の※ここまで※を消去。□□□□□-->
-		<!--□□□□□　※ここまで※　□□□□□-->
 
-		<!--□□□□□　●次の3行はIE8に未対応。　□□□□□-->
-		<!--	<script type="text/javascript">	-->
-		<!--	document.write('<p id="today">今日の日付 <strong>' + year + '/' + month + '/' + day + '（' + week + '）</p>');	-->
-		<!--	</script>	-->
-		<!--□□□□□  ⑤フッターの問い合わせ先やクレジットなど  □□□□□-->
-		<p id="tel">ゴミ分別のお問い合わせは〇〇〇まで　Tel:<a href="tel:0000-00-0000">0000-00-0000</a></p>
-		<p id="copyright">&copy;〇〇〇&nbsp;<span>[更新&nbsp;yyyy/mm/dd]<br>
-		<a href="http://www4.ttn.ne.jp/~flowerhana/gomiindex.html" data-ajax="false">オリジナルゴミチェッカーはコチラ</a></span></p>
+<!--■■■■■※ここまで※■■■■■-->
+
+<!--■■■■■⑤【各自治体のオープンデータのポータルサイトへのリンク】次の「越前市」の部分を直してください。もしない場合は、次の※ここまで※を消去してください。■■■■■-->
+
+<!--■■■■■※ここまで■■■■■-->
+
+<!--■■■■■⑥【著作権表示】次の「越前市ぷらぷらぼ」の部分を直してください。■■■■■-->
+		<font size="2">&copy;〇〇〇<br>
+<a href="https://www.city.hakodate.hokkaido.jp/docs/2014012100458/" target="_blank">ごみ収集日カレンダー</a></font><br>
+<!--■■■■■※ここまで■■■■■-->
+		<!--<font size="2">&nbsp;<a href="http://www4.ttn.ne.jp/~flowerhana/gomiindex.html" target="_blank">オリジナル版ゴミチェッカー</a></font><br>-->
+
+<!--■■■■■⑦【最終更新日】次の「日付」の部分を直してください。■■■■■-->
+		<font size="2">Last updated[2015/02/13]</font>
+<!--■■■■■※ここまで■■■■■-->
+
 	</div>
+
 </div>
 
 
 </body>
+
 </html>
