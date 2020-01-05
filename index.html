@@ -23,35 +23,91 @@ $(window).load(function(){
 	myparseXml()
 });
  
+// □□□□□　xmlデータ取得　□□□□□
 function myparseXml(xml){
 	$.mobile.defaultPageTransition = 'none';
 	scrollTo(0,0);
-	$.getinfo({xml: "xml/gomi.xml", template: "text/gomichecker.txt"},
-		function (obj, map) {
-			$('#myList li').remove();
-			$('#myContents div').remove();
-			var mycategory = $('#mysel').val();
-			var myList = "", myContents = "";
-			var count = $.size("gomi");
-			for (var n = 0; n < count; n++) {
-				if(mycategory == "全て"){
-					myList += $.convert("myList", n);
-					myContents += $.convert("myContents", n);
-				}
-				else if($.convert("mySel", n).match(mycategory)){
-					myList += $.convert("myList", n);
-					myContents += $.convert("myContents", n);
-				}
-				else{
-				}
-			}
-			$("#myList").append(myList).listview("refresh");
-			$("#home").after(myContents).page();
-			$("input[data-type='search']").val("");
-		},
-		function (msg) { alert(msg); }
-	);
+	$.ajax({
+		url: "xml/gomi.xml",
+		type: "GET",
+		dataType: "xml",
+		error: function(){alert("動作検証中：\n動作確認済(推奨ブラウザ)：Safari,FireFox,IE8,Google Chrome");},
+		success: function(xml){parseXml(xml);}
+	});
 }
+
+
+// □□□□□　xmlデータ取得時におけるリストとコンテンツの設定　□□□□□
+function parseXml(xml){
+	$('#myList li').remove();
+	$('#myContents div').remove();
+	var myList = "";
+	var myContents = "";
+	var mygomi = $("gomi", xml);
+	var i;
+	myList = myList + "<li data-theme='b'><a href='#no0'>収集日をチェックする</a></li>";
+	myContents = myContents + "<div data-role='page' id='no0' data-url='no0'>" +
+					"<div data-role='header' data-position='fixed' align='center' + data-add-back-btn='true'>" +
+						"<image src='image/4_1_gomichecker.png' width='200' alt='gomichecker'>" +
+					"</div>" +
+					"<div data-role='content'>" +
+						"<h4>収集日</h4>" +
+						"<ul name='calendar' data-role='listview' data-inset='true'></ul>" +
+						"<ul name='question' data-role='listview' data-inset='true'></ul>" +
+						"<ul name='message' data-role='listview' data-inset='true'></ul>" +
+					"</div>" +
+				"</div>";
+	for (i = 1; i < mygomi.length + 1; i++){
+		myList += "<li data-filtertext=" + $(mygomi[i]).find("keyword").text() + $(mygomi[i]).find("kubun").text() + ">" +
+			"<a href='#no" + i + "'>" + $(mygomi[i]).find("name").text() + "<br>" +
+				"<span style='padding-left: 10px; font-size: smaller; color: gray; font-weight: normal;'>" +
+					"<b>" + $(mygomi[i]).find("kubun").text() + "</b>&emsp;" + $(mygomi[i]).find("zyouken").text() +
+				"</span>" +
+			"</a></li>";
+		myContents += "<div data-role='page' id='no" + i + "' data-url='no" + i + "'>" +
+					"<div data-role='header' data-position='fixed' align='center' + data-add-back-btn='true'>" +
+						"<image src='image/4_1_gomichecker.png' width='200' alt='gomichecker'>" +
+					"</div>" +
+					"<div data-role='content'>" +
+						"<h3>" +$(mygomi[i]).find("name").text() + "</h3>" +
+						"<h3>分別：" + $(mygomi[i]).find("kubun").text() + "</h3>" +
+						"<p>" + $(mygomi[i]).find("zyouken").text() + "</p>" +
+						"<h4>収集日</h4>" +
+						"<ul name='calendar' data-role='listview' data-inset='true'></ul>" +
+						"<ul name='question' data-role='listview' data-inset='true'></ul>" +
+						"<ul name='message' data-role='listview' data-inset='true'></ul>" +
+					"</div>" +
+				"</div>";
+	}
+	$("#myList").append(myList).listview("refresh");
+	$("#home").after(myContents).page();
+	$("input[data-type='search']").val("");
+}
+
+
+// □□□□□　TOPへ戻るボタンの設定　□□□□□
+$(document).on("scrollstop", function(e, d){
+	if($("body").scrollTop() > 400){
+		$("#totop").fadeIn(200);
+	}else{
+		$("#totop").fadeOut(200);
+	};
+});
+
+
+// □□□□□　日付の設定　□□□□□
+var weeks = new Array('日','月','火','水','木','金','土');
+var now = new Date();
+var year = now.getYear();
+var month = now.getMonth() + 1;
+var day = now.getDate();
+var week = weeks[ now.getDay() ];
+if(year < 2000) { year += 1900; }
+if(month < 10) { month = "0" + month; }
+if(day < 10) { day = "0" + day; }
+
+
+</script>
 
 </script>
 </script>
