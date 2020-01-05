@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="image/gomi_icon.png"/>
 
 <!--　①自治体名称を変更　-->
-<title>越前市ゴミチェッカー</title>
+<title>別海町ゴミチェッカー</title>
 
 
 <!--□□□□□  javascript  □□□□□-->
@@ -30,7 +30,7 @@ function myparseXml(xml){
 		url: "xml/gomi.xml",
 		type: "GET",
 		dataType: "xml",
-		error: function(){alert("動作検証中：\n動作確認済(推奨ブラウザ)：Safari,FireFox,IE8,Google Chrome");},
+		error: function(){alert("動作検証中：\n動作確認済(推奨ブラウザ)：Safari,FireFox,IE11,Google Chrome");},
 		success: function(xml){parseXml(xml);}
 	});
 }
@@ -143,7 +143,7 @@ p#commune span {
 		<image src="image/gomicheckerimage/1_2_gomichecker.png" width="200" alt="gomichecker" align="left">
 
 		<!--□□□□□  ③吹き出し中の自治体名称を設定（②と連動）  □□□□□-->
-		<p id="commune"><span>越前市</span></p>
+		<p id="commune"><span>別海町</span></p>
 
 		<select id="mysel" name="mysel" data-inline="true" onchange="myparseXml()">
 			<option value="全て">全て</option>
@@ -173,13 +173,6 @@ p#commune span {
 <!--□□□□□  フッター  □□□□□-->
 	<div data-role="footer" data-position="fixed" data-tap-toggle="false" align="center">
 		<!--□□□□□　④「ゴミかれんだー」を使用しない場合は、次の※ここまで※を消去。□□□□□-->
-		<font size="2">
-		<a href="http://www4.ttn.ne.jp/~flowerhana/gomioldversion/gomicalendar.html" data-ajax="false" style="text-decoration:none">
-			<div><image src="image/gomicheckerimage/3_1_white.png" width="100%" height="30" alt=""></div>
-			<span style="position: absolute; top: 8px; left: 10px;">町内別ゴミ収集日をチェック！</span>
-			<span style="position: absolute; top: 2px; left: 190px;"><image src="image/gomicheckerimage/3_2_gomicalendar-mini.png" width="130" alt=""></span>
-		</a>
-		</font>
 		<!--□□□□□　※ここまで※　□□□□□-->
 
 		<!--□□□□□　●次の3行はIE8に未対応。　□□□□□-->
@@ -187,8 +180,8 @@ p#commune span {
 		<!--	document.write('<p id="today">今日の日付 <strong>' + year + '/' + month + '/' + day + '（' + week + '）</p>');	-->
 		<!--	</script>	-->
 		<!--□□□□□  ⑤フッターの問い合わせ先やクレジットなど  □□□□□-->
-		<p id="tel">ゴミ分別のお問い合わせは越前市環境政策課まで　Tel:<a href="tel:0778-22-5342">0778-22-5342</a></p>
-		<p id="copyright">&copy;越前市ぷらぷらぼ&nbsp;<span>[更新&nbsp;2015/02/08]<br>
+		<p id="tel">ゴミ分別のお問い合わせは〇〇〇まで　Tel:<a href="tel:0778-22-5342">0778-22-5342</a></p>
+		<p id="copyright">&copy;〇〇〇&nbsp;<span>[更新&nbsp;yyyy/mm/dd]<br>
 		<a href="http://www4.ttn.ne.jp/~flowerhana/gomiindex.html" data-ajax="false">オリジナルゴミチェッカーはコチラ</a></span></p>
 	</div>
 </div>
